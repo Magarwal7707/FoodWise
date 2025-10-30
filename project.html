@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Food Wise</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#008B84">
+  <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Food Wise&quot;,&quot;short_name&quot;:&quot;FoodWise&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#F6F8F9&quot;,&quot;theme_color&quot;:&quot;#008B84&quot;}">
+  <style>
+    :root{
+      --page-bg  : #F6F8F9;
+      --card     : #FFFFFF;
+      --teal     : #008B84;
+      --teal-dark: #006F6A;
+      --sand     : #D98236;
+      --sand-dark: #C46D28;
+      --text-dark: #222;
+      --text-light:#666;
+      --border   : #E0E0E0;
+      --shadow   : 0 8px 24px rgba(0,0,0,.07);
+      --radius   : 16px;
+      --transition:.3s ease;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:var(--page-bg);
+      color:var(--text-dark);
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+    }
+    button,input,select,textarea{font:inherit;}
+
+    /* ----- HEADER ----- */
+    header{
+      background:var(--teal);
+      color:#fff;
+      padding:2rem 1rem 1.6rem;
+      text-align:center;
+      position:relative;
+    }
+    #logo{
+      font-size:clamp(2.2rem,5vw,3.2rem);
+      font-weight:800;
+      letter-spacing:1px;
+    }
+    #impactBar{
+      margin-top:1rem;
+      font-size:1.2rem;
+      font-weight:600;
+      letter-spacing:.5px;
+    }
+    #impactBar span{color:#FFE477;}
+
+    /* ----- HERO ----- */
+    .hero{
+      width:100%;
+      height:32vh;
+      min-height:180px;
+      background:url("https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:clamp(1.4rem,3vw,2.2rem);
+      text-align:center;
+      position:relative;
+    }
+    .hero::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.38);
+    }
+    .hero span{position:relative;z-index:1;}
+
+    /* ----- CARDS ----- */
+    .zig-wrapper{padding:4rem 2rem;}
+    .zig{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:3rem 2rem;
+      max-width:1100px;
+      margin:auto;
+    }
+    .zig .card:nth-child(even){transform:translateY(80px);}
+    @media (max-width:768px){
+      .zig{grid-template-columns:1fr;}
+      .zig .card:nth-child(even){transform:none;}
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:3.2rem 2.4rem;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      transition:transform var(--transition),box-shadow var(--transition);
+    }
+    .card:hover{
+      transform:translateY(-8px);
+      box-shadow:0 12px 28px rgba(0,0,0,.1);
+    }
+    .card h3{
+      margin-bottom:1rem;
+      color:var(--teal);
+      font-size:1.6rem;
+    }
+    .card p{
+      flex:1 1 auto;
+      margin-bottom:1.8rem;
+      color:var(--text-light);
+      font-size:1.1rem;
+    }
+    .card button{
+      margin-top:auto;
+      border:none;
+      padding:1.2rem 1.8rem;
+      border-radius:50px;
+      background:var(--sand);
+      color:#fff;
+      font-weight:600;
+      font-size:1.15rem;
+      cursor:pointer;
+      transition:background var(--transition);
+    }
+    .card button:hover{background:var(--sand-dark);}
+    .card button:active{transform:scale(.96);}
+
+    /* ----- MODALS ----- */
+    .modal{
+      display:none;
+      position:fixed;
+      z-index:999;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      align-items:center;
+      justify-content:center;
+      padding:1rem;
+    }
+    .modal-content{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:3rem 2.4rem;
+      width:100%;
+      max-width:440px;
+      text-align:center;
+      position:relative;
+      animation:fadeIn .3s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+    .modal-content h3{margin-bottom:1.4rem;color:var(--teal);font-size:1.4rem;}
+    .modal-content input{
+      width:100%;
+      padding:1rem 1.2rem;
+      margin:1rem 0 1.6rem;
+      border:1px solid var(--border);
+      border-radius:50px;
+      font-size:1.05rem;
+    }
+    .modal-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.8rem;
+      justify-content:center;
+    }
+    .pill{
+      border:none;
+      background:var(--teal);
+      color:#fff;
+      padding:.9rem 2rem;
+      border-radius:50px;
+      font-weight:600;
+      font-size:1.05rem;
+      cursor:pointer;
+      transition:background var(--transition),transform var(--transition);
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
+    }
+    .pill:hover{background:var(--teal-dark);}
+    .pill:active{transform:scale(.96);}
+    .pill.sand{background:var(--sand);}
+    .pill.sand:hover{background:var(--sand-dark);}
+    .close{
+      position:absolute;
+      top:1rem;right:1.2rem;
+      font-size:2rem;
+      cursor:pointer;
+      color:var(--text-light);
+      transition:color var(--transition);
+    }
+    .close:hover{color:var(--text-dark);}
+
+    /* ----- FOOTER ----- */
+    footer{
+      text-align:center;
+      padding:2rem 1rem;
+      font-size:.9rem;
+      color:var(--text-light);
+    }
+
+    /* ----- DARK MODE ----- */
+    @media (prefers-color-scheme: dark){
+      :root{
+        --page-bg:#121212;
+        --card:#1e1e1e;
+        --text-dark:#e0e0e0;
+        --border:#333;
+        --shadow:0 8px 24px rgba(0,0,0,.4);
+      }
+      .card{border:1px solid #333;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div id="logo">Food Wise</div>
+  <div id="impactBar">🌱 <span id="kg">0</span> kg meals saved this month = <span id="plates">0</span> plates donated</div>
+</header>
+
+<section class="hero">
+  <span>“Every bite counts – let’s feed bellies, not bins.”</span>
+</section>
+
+<div class="zig-wrapper">
+  <div class="zig">
+    <div class="card">
+      <h3>🔄 Update Tomorrow’s Meal Plan</h3>
+      <p>Tell us you’re coming so we cook just enough.</p>
+      <button id="enrollBtn">Update Tomorrow's Meal Plan</button>
+    </div>
+    <div class="card">
+      <h3>📊 Diet-Chart Generator</h3>
+      <p>Get macro recommendations synced to today’s menu.</p>
+      <button id="dietBtn">Would you like a Diet Chart?</button>
+    </div>
+    <div class="card">
+      <h3>💬 Give Feedback</h3>
+      <p>30-second Google form – voice your taste.</p>
+      <button id="feedbackBtn">Give Feedback</button>
+    </div>
+    <div class="card">
+      <h3>👨‍🍳 Mess Staff Info</h3>
+      <p>Live head-count & historic trend for chefs.</p>
+      <button id="staffBtn">View Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<footer>Made with ❤️ by students, for students.</footer>
+
+<!-- ---------- MODALS ---------- -->
+<div id="enrollModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="enrollModal">&times;</span>
+    <h3>Enter your Enrollment Number</h3>
+    <input id="enrollInput" type="text" placeholder="e.g. 1234567890" autocomplete="off">
+    <div class="modal-actions">
+      <button class="pill" id="submitEnroll">Enter</button>
+    </div>
+  </div>
+</div>
+
+<div id="hostelModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="hostelModal">&times;</span>
+    <h3>Select your Hostel</h3>
+    <div class="modal-actions">
+      <button class="pill" data-hostel="Tejas">Tejas</button>
+      <button class="pill" data-hostel="Ambaram">Ambaram</button>
+      <button class="pill" data-hostel="Agira">Agira</button>
+    </div>
+  </div>
+</div>
+
+<!-- ----- MULTI-SELECT MEALS ----- -->
+<div id="mealModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="mealModal">&times;</span>
+    <h3>Which meals would you like to have?<br><small>(choose any)</small></h3>
+    <form id="mealForm" style="margin:1.2rem 0 1.8rem;text-align:left;">
+      <label style="display:flex;align-items:center;margin:.6rem 0;font-size:1.1rem;cursor:pointer;">
+        <input type="checkbox" value="Breakfast" style="width:20px;height:20px;margin-right:10px;"> 🌅 Breakfast
+      </label>
+      <label style="display:flex;align-items:center;margin:.6rem 0;font-size:1.1rem;cursor:pointer;">
+        <input type="checkbox" value="Lunch" style="width:20px;height:20px;margin-right:10px;"> 🍱 Lunch
+      </label>
+      <label style="display:flex;align-items:center;margin:.6rem 0;font-size:1.1rem;cursor:pointer;">
+        <input type="checkbox" value="Dinner" style="width:20px;height:20px;margin-right:10px;"> 🍽️ Dinner
+      </label>
+    </form>
+    <div class="modal-actions">
+      <button class="pill" id="confirmMeals">Confirm meals</button>
+    </div>
+  </div>
+</div>
+
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="successModal">&times;</span>
+    <h3>✅ Success</h3>
+    <p>The Mess will be preparing these meals for you tomorrow. Bon appétit!</p>
+  </div>
+</div>
+
+<div id="dietModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="dietModal">&times;</span>
+    <h3>Choose Activity Level</h3>
+    <div class="modal-actions">
+      <button class="pill sand" data-level="high">High Calorie Burn</button>
+      <button class="pill sand" data-level="low">Low Calorie Burn</button>
+    </div>
+  </div>
+</div>
+
+<!-- ----- STAFF DASHBOARD ----- -->
+<div id="staffModal" class="modal">
+  <div class="modal-content" style="max-width:900px;width:96%">
+    <span class="close" data-close="staffModal">&times;</span>
+    <h3>Live Mess Dashboard</h3>
+    <!-- 2. today’s responses -->
+    <h4 style="margin-top:1.4rem">Total Responses <span id="respCount" style="color:var(--teal)">0</span></h4>
+    <div id="todayList" style="max-height:220px;overflow:auto;margin-top:.8rem"></div>
+  </div>
+</div>
+
+<div id="offlineModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="offlineModal">&times;</span>
+    <h3>⚠️ Offline</h3>
+    <p>Please connect to the internet and try again.</p>
+  </div>
+</div>
+
+<!-- ---------- FIREBASE ---------- -->
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVUCiFoFxIGIbTEl0RwFqsAFbBubFzfMY",
+    authDomain: "foodwise-be544.firebaseapp.com",
+    databaseURL: "https://foodwise-be544-default-rtdb.firebaseio.com",
+    projectId: "foodwise-be544",
+    storageBucket: "foodwise-be544.firebasestorage.app",
+    messagingSenderId: "474184904149",
+    appId: "1:474184904149:web:ee47521340386e7625e15c"
+  };
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+  window.submitMeal = ({enroll, hostel, meal, at}) =>
+     push(ref(db, 'meals'), {enroll, hostel, meal, at});
+</script>
+
+<script>
+  const $  = q => document.querySelector(q);
+  const $$ = q => document.querySelectorAll(q);
+  let enroll, hostel, meal;
+
+  /* impact counter animation */
+  function animate(id,target){
+    const el=document.getElementById(id);
+    let i=0;
+    const t=setInterval(()=>{el.textContent=++i;if(i===target)clearInterval(t);},20);
+  }
+  animate('kg',100);
+  animate('plates',240);
+
+  /* modal helpers */
+  function openModal(id){$(`#${id}`).style.display='flex';}
+  function closeModal(id){$(`#${id}`).style.display='none';}
+  $$('.close').forEach(btn=>btn.onclick=()=>closeModal(btn.dataset.close));
+  window.onclick=e=>{if(e.target.classList.contains('modal'))e.target.style.display='none';};
+
+  /* persistent storage */
+  window.addEventListener('DOMContentLoaded',()=>{
+    enroll=localStorage.getItem('fw-enroll')||'';
+    hostel=localStorage.getItem('fw-hostel')||'';
+  });
+
+  /* flow: enroll → hostel → meal(multi) → success */
+  $('#enrollBtn').onclick=()=>openModal('enrollModal');
+  $('#submitEnroll').onclick=()=>{
+    const val=$('#enrollInput').value.trim();
+    if(!val){alert('Enter enrollment');return;}
+    enroll=val;
+    localStorage.setItem('fw-enroll',enroll);
+    closeModal('enrollModal');
+    openModal('hostelModal');
+  };
+  $$('[data-hostel]').forEach(btn=>btn.onclick=()=>{
+    hostel=btn.dataset.hostel;
+    localStorage.setItem('fw-hostel',hostel);
+    closeModal('hostelModal');
+    openModal('mealModal');
+  });
+
+  /* multi-select meals */
+  $('#confirmMeals').onclick=()=>{
+    const checked=Array.from($$('#mealForm input:checked')).map(cb=>cb.value);
+    if(!checked.length){alert('Please pick at least one meal');return;}
+    meal=checked.join(',');
+    closeModal('mealModal');
+    openModal('successModal');
+    submitMeal({enroll,hostel,meal,at:Date.now()});
+    setTimeout(()=>closeModal('successModal'),2000);
+  };
+
+  /* diet chart */
+  $('#dietBtn').onclick=()=>openModal('dietModal');
+  $$('[data-level]').forEach(btn=>btn.onclick=()=>{
+    closeModal('dietModal');
+    const id=btn.dataset.level==='high'?'xxxx':'yyyy';
+    window.open(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:html`,'_blank','noopener');
+  });
+
+  /* feedback */
+  $('#feedbackBtn').onclick=()=>{
+    const base='https://forms.google.com/xxxxxx';
+    const url=enroll?`${base}?entry.xxxxx=${enroll}&entry.yyyyy=${hostel||''}`:base;
+    window.open(url,'_blank','noopener');
+  };
+
+  /* ----- STAFF DASH LIVE LIST (WORKING) ----- */
+  const FIREBASE_URL = 'https://foodwise-be544-default-rtdb.firebaseio.com/meals.json';
+  const staffBtn     = document.getElementById('staffBtn');
+  const todayList    = document.getElementById('todayList');
+  const respCount    = document.getElementById('respCount');
+
+  staffBtn.onclick=()=>{
+    openModal('staffModal');
+    loadToday();
+    staffInterval=setInterval(loadToday,30_000);
+  };
+  document.querySelector('[data-close="staffModal"]').onclick=()=>{
+    closeModal('staffModal');
+    clearInterval(staffInterval);
+  };
+
+  function loadToday(){
+    fetch(FIREBASE_URL)
+      .then(r=>r.json())
+      .then(snap=>{
+        const today = new Date().toISOString().slice(0,10); // yyyy-mm-dd
+        const rows  = Object.values(snap||{})
+                            .filter(r=>new Date(r.at).toISOString().slice(0,10)===today)
+                            .sort((a,b)=>b.at-a.at);
+        respCount.textContent = rows.length;
+        todayList.innerHTML   = rows.length
+          ? rows.map(r=>`<div style="padding:.5rem;border-bottom:1px solid var(--border)"><strong>${r.enroll}</strong> · ${r.hostel} · <em>${r.meal}</em></div>`).join('')
+          : '<p style="color:#888">No responses yet today.</p>';
+      })
+      .catch(err=>{todayList.innerHTML='<p style="color:red">Failed to load.</p>'});
+  }
+</script>
+</body>
+</html>
