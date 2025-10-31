@@ -31,7 +31,7 @@
     }
     button,input,select,textarea{font:inherit;}
 
-    /* ----- HEADER ----- */
+    /* ---------- HEADER ---------- */
     header{
       background:var(--teal);
       color:#fff;
@@ -52,7 +52,7 @@
     }
     #impactBar span{color:#FFE477;}
 
-    /* ----- HERO ----- */
+    /* ---------- HERO ---------- */
     .hero{
       width:100%;
       height:32vh;
@@ -74,7 +74,7 @@
     }
     .hero span{position:relative;z-index:1;}
 
-    /* ----- CARDS ----- */
+    /* ---------- CARDS ---------- */
     .zig-wrapper{padding:4rem 2rem;}
     .zig{
       display:grid;
@@ -128,7 +128,7 @@
     .card button:hover{background:var(--sand-dark);}
     .card button:active{transform:scale(.96);}
 
-    /* ----- MODALS ----- */
+    /* ---------- MODALS ---------- */
     .modal{
       display:none;
       position:fixed;
@@ -191,7 +191,7 @@
     }
     .close:hover{color:var(--text-dark);}
 
-    /* ----- FOOTER ----- */
+    /* ---------- FOOTER ---------- */
     footer{
       text-align:center;
       padding:2rem 1rem;
@@ -199,7 +199,7 @@
       color:var(--text-light);
     }
 
-    /* ----- DARK MODE ----- */
+    /* ---------- DARK MODE ---------- */
     @media (prefers-color-scheme: dark){
       :root{
         --page-bg:#121212;
@@ -235,6 +235,12 @@
       <p>Get macro recommendations synced to today’s menu.</p>
       <button id="dietBtn">Would you like a Diet Chart?</button>
     </div>
+    <!--  NEW CARD  -->
+    <div class="card">
+      <h3>📋 View your Mess Menu</h3>
+      <p>Check  menu for your hostel mess in one click.</p>
+      <button id="menuBtn">View Menu</button>
+    </div>
     <div class="card">
       <h3>💬 Give Feedback</h3>
       <p>30-second Google form – voice your taste.</p>
@@ -250,7 +256,7 @@
 
 <footer>Made with ❤️ by students, for students.</footer>
 
-<!-- ---------- MODALS ---------- -->
+<!-- ====================  MODALS  ==================== -->
 <div id="enrollModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="enrollModal">&times;</span>
@@ -274,7 +280,7 @@
   </div>
 </div>
 
-<!-- ----- MULTI-SELECT MEALS ----- -->
+<!--  MULTI-SELECT MEALS (normal flow)  -->
 <div id="mealModal" class="modal">
   <div class="modal-content">
     <span class="close" data-close="mealModal">&times;</span>
@@ -300,7 +306,7 @@
   <div class="modal-content">
     <span class="close" data-close="successModal">&times;</span>
     <h3>✅ Success</h3>
-    <p>The Mess will be preparing these meals for you tomorrow. Bon appétit!</p>
+    <p>The Mess will be preparing these meals for you. Bon appétit!</p>
   </div>
 </div>
 
@@ -315,13 +321,38 @@
   </div>
 </div>
 
-<!-- ----- STAFF DASHBOARD ----- -->
+<!--  NEW MODALS  -->
+<div id="hostelModal2" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="hostelModal2">&times;</span>
+    <h3>Select your Hostel</h3>
+    <div class="modal-actions">
+      <button class="pill" data-hostel2="Tejas">Tejas</button>
+      <button class="pill" data-hostel2="Ambaram">Ambaram</button>
+      <button class="pill" data-hostel2="Agira">Agira</button>
+    </div>
+  </div>
+</div>
+
+<div id="mealModal2" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="mealModal2">&times;</span>
+    <h3>Select the meal</h3>
+    <div class="modal-actions">
+      <button class="pill" data-meal2="Breakfast">Breakfast</button>
+      <button class="pill" data-meal2="Lunch">Lunch</button>
+      <button class="pill" data-meal2="Dinner">Dinner</button>
+    </div>
+  </div>
+</div>
+
+<!--  DAY-WISE STAFF DASHBOARD  -->
 <div id="staffModal" class="modal">
   <div class="modal-content" style="max-width:900px;width:96%">
     <span class="close" data-close="staffModal">&times;</span>
     <h3>Live Mess Dashboard</h3>
-    <!-- 2. today’s responses -->
-    <h4 style="margin-top:1.4rem">Total Responses <span id="respCount" style="color:var(--teal)">0</span></h4>
+
+    <h4 style="margin-top:1.4rem">Today’s Responses <span id="respCount" style="color:var(--teal)">0</span></h4>
     <div id="todayList" style="max-height:220px;overflow:auto;margin-top:.8rem"></div>
   </div>
 </div>
@@ -334,7 +365,20 @@
   </div>
 </div>
 
-<!-- ---------- FIREBASE ---------- -->
+<!--  NEW MENU-HOSTEL MODAL  -->
+<div id="menuHostelModal" class="modal">
+  <div class="modal-content">
+    <span class="close" data-close="menuHostelModal">&times;</span>
+    <h3>Pick your Hostel</h3>
+    <div class="modal-actions">
+      <button class="pill" data-menu-hostel="Tejas">Tejas</button>
+      <button class="pill" data-menu-hostel="Agira">Agira</button>
+      <button class="pill" data-menu-hostel="Ambaram">Ambaram</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================  FIREBASE  ==================== -->
 <script type="module">
   const firebaseConfig = {
     apiKey: "AIzaSyAVUCiFoFxIGIbTEl0RwFqsAFbBubFzfMY",
@@ -349,14 +393,17 @@
   import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
   const app = initializeApp(firebaseConfig);
   const db  = getDatabase(app);
-  window.submitMeal = ({enroll, hostel, meal, at}) =>
-     push(ref(db, 'meals'), {enroll, hostel, meal, at});
+  /* ---- DAY-WISE PUSH ---- */
+  window.submitMeal = ({enroll, hostel, meal, at}) => {
+     const today = new Date().toISOString().slice(0,10);          // yyyy-mm-dd
+     push(ref(db, 'meals/' + today), {enroll, hostel, meal, at}); // store under date folder
+  };
 </script>
 
 <script>
   const $  = q => document.querySelector(q);
   const $$ = q => document.querySelectorAll(q);
-  let enroll, hostel, meal;
+  let enroll, hostel, meal, calorieLevel;   // calorieLevel added
 
   /* impact counter animation */
   function animate(id,target){
@@ -379,7 +426,7 @@
     hostel=localStorage.getItem('fw-hostel')||'';
   });
 
-  /* flow: enroll → hostel → meal(multi) → success */
+  /* ----------  NORMAL FLOW: enrol → hostel → multi-meal → Firebase  ---------- */
   $('#enrollBtn').onclick=()=>openModal('enrollModal');
   $('#submitEnroll').onclick=()=>{
     const val=$('#enrollInput').value.trim();
@@ -395,8 +442,6 @@
     closeModal('hostelModal');
     openModal('mealModal');
   });
-
-  /* multi-select meals */
   $('#confirmMeals').onclick=()=>{
     const checked=Array.from($$('#mealForm input:checked')).map(cb=>cb.value);
     if(!checked.length){alert('Please pick at least one meal');return;}
@@ -407,26 +452,52 @@
     setTimeout(()=>closeModal('successModal'),2000);
   };
 
-  /* diet chart */
+  /* ----------  DIET-CHART FLOW: calorie → hostel2 → single-meal2 → Google sheet  ---------- */
   $('#dietBtn').onclick=()=>openModal('dietModal');
   $$('[data-level]').forEach(btn=>btn.onclick=()=>{
+    calorieLevel=btn.dataset.level;               // "high" or "low"
     closeModal('dietModal');
-    const id=btn.dataset.level==='high'?'xxxx':'yyyy';
-    window.open(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:html`,'_blank','noopener');
+    openModal('hostelModal2');                    // same hostel list re-used
+  });
+  $$('[data-hostel2]').forEach(btn=>btn.onclick=()=>{
+    hostel=btn.dataset.hostel2;                   // pick hostel
+    closeModal('hostelModal2');
+    openModal('mealModal2');                      // ask for single meal
+  });
+  $$('[data-meal2]').forEach(btn=>btn.onclick=()=>{
+    const chosenMeal=btn.dataset.meal2;           // "Breakfast" etc.
+    closeModal('mealModal2');
+
+    /* open correct Google sheet (high/low calorie + meal) */
+    const base=calorieLevel==='high'
+      ? 'https://docs.google.com/spreadsheets/d/xxxx/gviz/tq?tqx=out:html&sheet='
+      : 'https://docs.google.com/spreadsheets/d/yyyy/gviz/tq?tqx=out:html&sheet=';
+    const url=base + chosenMeal;                  // Breakfast sheet, Lunch sheet, etc.
+    window.open(url,'_blank','noopener');
   });
 
-  /* feedback */
+  /* ----------  NEW MESS MENU FLOW  ---------- */
+  $('#menuBtn').onclick=()=>openModal('menuHostelModal');
+  $$('[data-menu-hostel]').forEach(btn=>btn.onclick=()=>{
+    const h=btn.dataset.menu-hostel;                       // Tejas / Agira / Ambaram
+    closeModal('menuHostelModal');
+    /* ----  open hostel-specific Google-Sheet tab  ---- */
+    const url=`https://docs.google.com/spreadsheets/d/1MENU_${h}/gviz/tq?tqx=out:html&sheet=Today`;
+    window.open(url,'_blank','noopener');
+  });
+
+  /* ----------  FEEDBACK  ---------- */
   $('#feedbackBtn').onclick=()=>{
-    const base='https://forms.google.com/xxxxxx';
+    const base='https://docs.google.com/forms/d/e/1FAIpQLSf8yWqkXfxq6uk1k53uqpRw0O7TZUjfg_LNcpOzEhBp4VcH6g/viewform?usp=header';
     const url=enroll?`${base}?entry.xxxxx=${enroll}&entry.yyyyy=${hostel||''}`:base;
     window.open(url,'_blank','noopener');
   };
 
-  /* ----- STAFF DASH LIVE LIST (WORKING) ----- */
-  const FIREBASE_URL = 'https://foodwise-be544-default-rtdb.firebaseio.com/meals.json';
+  /* ----------  DAY-WISE STAFF DASHBOARD  ---------- */
   const staffBtn     = document.getElementById('staffBtn');
   const todayList    = document.getElementById('todayList');
   const respCount    = document.getElementById('respCount');
+  let staffInterval;
 
   staffBtn.onclick=()=>{
     openModal('staffModal');
@@ -439,21 +510,26 @@
   };
 
   function loadToday(){
-    fetch(FIREBASE_URL)
+    const today = new Date().toISOString().slice(0,10);                       // yyyy-mm-dd
+    const dayRef = 'https://foodwise-be544-default-rtdb.firebaseio.com/meals/' + today + '.json';
+    fetch(dayRef)
       .then(r=>r.json())
       .then(snap=>{
-        const today = new Date().toISOString().slice(0,10); // yyyy-mm-dd
-        const rows  = Object.values(snap||{})
-                            .filter(r=>new Date(r.at).toISOString().slice(0,10)===today)
-                            .sort((a,b)=>b.at-a.at);
-        respCount.textContent = rows.length;
-        todayList.innerHTML   = rows.length
-          ? rows.map(r=>`<div style="padding:.5rem;border-bottom:1px solid var(--border)"><strong>${r.enroll}</strong> · ${r.hostel} · <em>${r.meal}</em></div>`).join('')
-          : '<p style="color:#888">No responses yet today.</p>';
+        if(!snap){ 
+          todayList.innerHTML='<p style="color:#888">No responses yet today.</p>';
+          respCount.textContent='0';
+          return;
+        }
+    const rows = Object.values(snap).sort((a,b)=>b.at-a.at);
+    respCount.textContent = rows.length;
+    todayList.innerHTML = rows.length
+      ? rows.map(r=>`<div style="padding:.5rem;border-bottom:1px solid var(--border)"><strong>${r.enroll}</strong> · ${r.hostel} · <em>${r.meal}</em></div>`).join('')
+      : '<p style="color:#888">No responses yet today.</p>';
       })
       .catch(err=>{todayList.innerHTML='<p style="color:red">Failed to load.</p>'});
   }
 </script>
 </body>
-</html># F o o d W i s e  
+</html>
+ 
  
